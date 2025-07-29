@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Contrato - Sempre Alerta</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="logo.png" alt="Sempre Alerta" class="logo">
+            <h1>Gerador de Contrato</h1>
+        </header>
+        
+        <form id="contract-form">
+            <section class="form-section">
+                <h2><i class="fas fa-user"></i> Tipo de Contratante</h2>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" id="pf-radio" name="tipo_contratante" value="pf" checked>
+                        <span class="radio-custom"></span>
+                        Pessoa Física (PF)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" id="pj-radio" name="tipo_contratante" value="pj">
+                        <span class="radio-custom"></span>
+                        Pessoa Jurídica (PJ)
+                    </label>
+                </div>
+            </section>
+
+            <section id="pf-fieldset" class="form-section">
+                <h2><i class="fas fa-id-card"></i> Dados do Contratante (PF)</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" name="pf_nome" placeholder="Nome completo" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Sexo</label>
+                        <select name="pf_sexo" required>
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Data de Nascimento</label>
+                        <input type="text" name="pf_nascimento" placeholder="DD/MM/AAAA" required>
+                    </div>
+                    <div class="input-group">
+                        <label>CPF</label>
+                        <div class="validation-wrapper">
+                            <input type="text" id="cpf" name="pf_cpf" placeholder="000.000.000-00" required>
+                            <span id="cpf-feedback" class="feedback"></span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>RG</label>
+                        <input type="text" name="pf_rg" placeholder="Número do RG" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Órgão Expedidor</label>
+                        <input type="text" name="pf_rg_orgao" placeholder="Ex: SSP/MS" required>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>E-mail</label>
+                        <input type="email" name="pf_email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Telefone Residencial</label>
+                        <input type="text" name="pf_tel_res" placeholder="(00) 0000-0000">
+                    </div>
+                    <div class="input-group">
+                        <label>Telefone Comercial</label>
+                        <input type="text" name="pf_tel_com" placeholder="(00) 0000-0000">
+                    </div>
+                    <div class="input-group">
+                        <label>Celular</label>
+                        <input type="text" name="pf_tel_cel" placeholder="(00) 00000-0000" required>
+                    </div>
+                    <div class="input-group">
+                        <label>CEP</label>
+                        <input type="text" name="pf_cep" id="pf_cep" placeholder="00000-000" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Endereço</label>
+                        <input type="text" name="pf_endereco" placeholder="Rua, número" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Bairro</label>
+                        <input type="text" name="pf_bairro" placeholder="Bairro" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Cidade</label>
+                        <input type="text" name="pf_cidade" placeholder="Cidade" required>
+                    </div>
+                    <div class="input-group">
+                        <label>UF</label>
+                        <input type="text" name="pf_uf" placeholder="UF" maxlength="2" required>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pj-fieldset" class="form-section" style="display:none;">
+                <h2><i class="fas fa-building"></i> Dados do Contratante (PJ)</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>CNPJ</label>
+                        <div class="validation-wrapper">
+                            <input type="text" id="cnpj" name="pj_cnpj" placeholder="00.000.000/0000-00" required disabled>
+                            <span id="cnpj-feedback" class="feedback"></span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Razão Social</label>
+                        <input type="text" name="pj_razao_social" placeholder="Razão Social" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Nome Fantasia</label>
+                        <input type="text" name="pj_nome_fantasia" placeholder="Nome Fantasia" disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Inscrição Estadual</label>
+                        <input type="text" name="pj_inscricao_estadual" placeholder="Nº da Inscrição Estadual" disabled>
+                    </div>
+                     <div class="input-group">
+                        <label>Data de Abertura</label>
+                        <input type="text" name="pj_data_abertura" placeholder="DD/MM/AAAA" disabled>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>E-mail</label>
+                        <input type="email" name="pj_email" placeholder="empresa@email.com" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Telefone Comercial</label>
+                        <input type="text" name="pj_tel_com" placeholder="(00) 0000-0000" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Celular</label>
+                        <input type="text" name="pj_tel_cel" placeholder="(00) 00000-0000" disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>CEP</label>
+                        <input type="text" name="pj_cep" id="pj_cep" placeholder="00000-000" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Endereço</label>
+                        <input type="text" name="pj_endereco" placeholder="Rua, número" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Bairro</label>
+                        <input type="text" name="pj_bairro" placeholder="Bairro" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>Cidade</label>
+                        <input type="text" name="pj_cidade" placeholder="Cidade" required disabled>
+                    </div>
+                    <div class="input-group">
+                        <label>UF</label>
+                        <input type="text" name="pj_uf" placeholder="UF" maxlength="2" required disabled>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h2><i class="fas fa-car"></i> Veículos e Equipamentos</h2>
+                <div id="vehicles-container"></div>
+                <button type="button" id="add-vehicle-btn" class="add-button">
+                    <i class="fas fa-plus"></i> Adicionar Veículo
+                </button>
+            </section>
+
+            <section class="form-section">
+                <h2><i class="fas fa-credit-card"></i> Plano e Condições de Pagamento</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Plano Contratado</label>
+                        <select name="plano_nome" id="plano_nome" required>
+                            <option value="Proteção Total GPS/GPRS/3G/4G">Proteção Total GPS/GPRS/3G/4G</option>
+                            <option value="Plano Proteção Total Satelital">Plano Proteção Total Satelital</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Valor da Mensalidade (R$)</label>
+                        <input type="text" name="plano_valor_mensalidade" placeholder="59,90" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Valor da Instalação (R$)</label>
+                        <input type="text" name="instalacao_valor" placeholder="250,00" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Forma de Pagamento Instalação</label>
+                        <select name="instalacao_pagamento" required>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Cartão de Crédito/Débito">Cartão de Crédito/Débito</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Dia de Vencimento</label>
+                        <input type="number" name="cond_vencimento" placeholder="Dia" min="1" max="31" required>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Observações sobre Pagamento</label>
+                        <textarea name="pagamento_obs" rows="2" placeholder="Ex: Pagamento da instalação em 2x no cartão."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h2><i class="fas fa-users"></i> Pessoas Autorizadas</h2>
+                <div id="authorized-persons-container"></div>
+                <button type="button" id="add-person-btn" class="add-button">
+                    <i class="fas fa-plus"></i> Adicionar Pessoa
+                </button>
+            </section>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-file-pdf"></i> Gerar Contrato em PDF
+                </button>
+            </div>
+        </form>
+        
+        <div id="loading" class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Gerando PDF, por favor aguarde...</p>
+            </div>
+        </div>
+    </div>
+
+    <template id="vehicle-template">
+        <div class="vehicle-block">
+            <div class="block-header">
+                <h4>Veículo <span class="vehicle-number">1</span></h4>
+                <button type="button" class="remove-btn">
+                    <i class="fas fa-trash"></i> Remover
+                </button>
+            </div>
+
+            <div class="checkbox-group full-width" style="margin-bottom: 20px;">
+                <label class="checkbox-option">
+                    <input type="checkbox" class="owner-is-not-contractor-checkbox" name="owner_is_not_contractor">
+                    <span class="checkbox-custom"></span>
+                    O proprietário do veículo não é o contratante.
+                </label>
+            </div>
+            <div class="vehicle-owner-details" style="display: none;">
+                 <h5><i class="fas fa-user-tie"></i> Dados do Proprietário do Veículo</h5>
+                 <div class="form-grid">
+                    <div class="input-group">
+                        <label>Nome Completo / Razão Social</label>
+                        <input type="text" name="veiculo_proprietario_nome" placeholder="Nome do proprietário">
+                    </div>
+                    <div class="input-group">
+                        <label>CPF / CNPJ</label>
+                        <input type="text" name="veiculo_proprietario_doc" placeholder="Documento do proprietário">
+                    </div>
+                    <div class="input-group">
+                        <label>RG / Inscrição Estadual</label>
+                        <input type="text" name="veiculo_proprietario_rg_ie" placeholder="RG ou I.E. do proprietário">
+                    </div>
+                     <div class="input-group">
+                        <label>Órgão Expedidor (se RG)</label>
+                        <input type="text" name="veiculo_proprietario_orgao" placeholder="Ex: SSP/MS">
+                    </div>
+                </div>
+            </div>
+            
+            <h5><i class="fas fa-car-side"></i> Dados do Veículo</h5>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Placa do Veículo</label>
+                    <input type="text" class="vehicle-plate" name="veiculo_placa" placeholder="AAA0A00" required>
+                </div>
+                <div class="input-group">
+                    <label>Marca</label>
+                    <input type="text" name="veiculo_marca" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Modelo</label>
+                    <input type="text" name="veiculo_modelo" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Cor</label>
+                    <input type="text" name="veiculo_cor" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Ano Fabricação</label>
+                    <input type="text" name="veiculo_ano_fab" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Ano Modelo</label>
+                    <input type="text" name="veiculo_ano_modelo" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Chassi</label>
+                    <input type="text" name="veiculo_chassi" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group">
+                    <label>RENAVAM</label>
+                    <input type="text" name="veiculo_renavam" placeholder="(automático)" readonly>
+                </div>
+                <div class="input-group" style="display:none;">
+                    <label>Situação</label>
+                    <input type="text" name="veiculo_situacao" readonly>
+                </div>
+                 <div class="input-group" style="display:none;">
+                    <label>Município/UF</label>
+                    <input type="text" name="veiculo_municipio_uf" readonly>
+                </div>
+                 <div class="input-group" style="display:none;">
+                    <label>Combustível</label>
+                    <input type="text" name="veiculo_combustivel" readonly>
+                </div>
+                 <div class="input-group" style="display:none;">
+                    <label>Espécie</label>
+                    <input type="text" name="veiculo_especie" readonly>
+                </div>
+                 <div class="input-group" style="display:none;">
+                    <label>Código FIPE</label>
+                    <input type="text" name="fipe_codigo" readonly>
+                </div>
+                <div class="input-group" style="display:none;">
+                    <label>Valor FIPE</label>
+                    <input type="text" name="fipe_valor" readonly>
+                </div>
+                <div class="input-group full-width">
+                    <label>Equipamentos Instalados</label>
+                    <div class="equip-group">
+                        <div class="equip-select">
+                            <label>Marca</label>
+                            <select name="equip_marca" class="equip-marca-select" required>
+                                <option value="">-- Carregando Marcas --</option>
+                            </select>
+                        </div>
+                        <div class="equip-select">
+                            <label>Modelo</label>
+                            <select name="equip_modelo" class="equip-modelo-select" required>
+                                <option value="">-- Selecione a marca --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group full-width">
+                    <label>Acessórios</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="acessorios" value="SIM Card" checked> <span class="checkbox-custom"></span> SIM Card
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="acessorios" value="Chicote de Instalação" checked> <span class="checkbox-custom"></span> Chicote de Instalação
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="acessorios" value="Relé de Bloqueio"> <span class="checkbox-custom"></span> Relé de Bloqueio
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="acessorios" value="Botão de Pânico"> <span class="checkbox-custom"></span> Botão de Pânico
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="acessorios" value="Sensor de Abertura"> <span class="checkbox-custom"></span> Sensor de Abertura
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="person-template">
+        <div class="person-block">
+            <div class="block-header">
+                <h5>Pessoa Autorizada <span class="person-number">1</span></h5>
+                <button type="button" class="remove-btn">
+                    <i class="fas fa-trash"></i> Remover
+                </button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Nome Completo</label>
+                    <input type="text" name="auth_nome" placeholder="Nome completo" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>CPF</label>
+                    <input type="text" name="auth_cpf" placeholder="000.000.000-00" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>RG</label>
+                    <input type="text" name="auth_rg" placeholder="RG" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Telefone Residencial</label>
+                    <input type="text" name="auth_tel_res" placeholder="(00) 0000-0000">
+                </div>
+                
+                <div class="input-group">
+                    <label>Telefone Comercial</label>
+                    <input type="text" name="auth_tel_com" placeholder="(00) 0000-0000">
+                </div>
+                
+                <div class="input-group">
+                    <label>Celular</label>
+                    <input type="text" name="auth_tel_cel" placeholder="(00) 00000-0000" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Notificar em caso de emergência?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="auth_notificar" value="Sim" checked>
+                            <span class="radio-custom"></span>
+                            Sim
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="auth_notificar" value="Não">
+                            <span class="radio-custom"></span>
+                            Não
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="input-group full-width">
+                    <label>Observações</label>
+                    <textarea name="auth_obs" placeholder="Informações adicionais"></textarea>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
