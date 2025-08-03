@@ -3,23 +3,30 @@ import requests
 import tempfile
 import logging
 import subprocess
-import locale # Importe a biblioteca locale
+import locale
+import socket
 from datetime import datetime
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from dotenv import load_dotenv
 from docxtpl import DocxTemplate
+from docx import Document
 
-# Carrega as variáveis de ambiente do arquivo .env
+# --- INÍCIO DA CORREÇÃO DE REDE (IPV4) ---
+_getaddrinfo = socket.getaddrinfo
+def getaddrinfo_ipv4(*args, **kwargs):
+    responses = _getaddrinfo(*args, **kwargs)
+    return [response for response in responses if response[0] == socket.AF_INET]
+socket.getaddrinfo = getaddrinfo_ipv4
+# --- FIM DA CORREÇÃO DE REDE ---
+
 load_dotenv()
-
-# Configuração básica de logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
-# Lista de equipamentos agora gerenciada pelo backend
+# --- LISTA DE EQUIPAMENTOS COMPLETA E CORRIGIDA ---
 EQUIPMENT_DATA = [
     { "marca": "Quanta", "modelo": "ACP-245" }, { "marca": "Hikvision", "modelo": "AE-DI5042-G4" },
     { "marca": "AirTag Systemsat", "modelo": "AirTag PB703" }, { "marca": "Entrack AOVX", "modelo": "AL300" },
@@ -106,25 +113,26 @@ EQUIPMENT_DATA = [
     { "marca": "Voxter", "modelo": "VXT-01" }, { "marca": "Império dos Rastreadores", "modelo": "Webtag" }
 ]
 
+def append_docx(main_doc, appendix_doc_path):
+    main_doc.add_page_break()
+    appendix_doc = Document(appendix_doc_path)
+    for element in appendix_doc.element.body:
+        main_doc.element.body.append(element)
+
 @app.route('/')
 def index():
-    """ Rota principal que serve o index.html. """
     return app.send_static_file('index.html')
 
 @app.route('/api/equipments', methods=['GET'])
 def get_equipments():
-    """ Endpoint para fornecer a lista de equipamentos ao frontend. """
     return jsonify(EQUIPMENT_DATA)
 
 @app.route('/api/consulta-placa/<placa>', methods=['GET'])
 def consulta_placa(placa):
-    """ Endpoint para consultar dados do veículo usando uma API externa. """
     token = os.getenv('PLATE_API_TOKEN')
     if not token:
         return jsonify({"error": "Token da API de placas não configurado no servidor."}), 500
-
     api_url = f"https://wdapi2.com.br/consulta/{placa}/{token}"
-
     try:
         response = requests.get(api_url)
         response.raise_for_status()
@@ -144,56 +152,53 @@ def consulta_placa(placa):
         logging.error(f"Erro inesperado na consulta de placa: {e}")
         return jsonify({"error": "Ocorreu um erro interno no servidor."}), 500
 
-
 @app.route('/api/generate-contract', methods=['POST'])
 def generate_contract():
-    """ Endpoint que gera o contrato em PDF a partir dos dados do formulário. """
     data = request.get_json()
     if not data:
         return jsonify({"error": "Dados não recebidos"}), 400
-
     try:
-        # --- INÍCIO DA MUDANÇA: CONFIGURAÇÃO DE IDIOMA ---
-        # Define o locale para Português do Brasil para formatar a data corretamente
         locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-        # --- FIM DA MUDANÇA ---
-        
         data['data_contrato'] = datetime.now().strftime('%d de %B de %Y')
-        doc = DocxTemplate("template_contrato.docx")
-        doc.render(data)
+        
+        # Lógica para auto-preenchimento dos dados do proprietário
+        for vehicle in data.get('vehicles', []):
+            if not vehicle.get('owner_is_not_contractor'):
+                if data.get('is_pf'):
+                    vehicle['veiculo_proprietario_nome'] = data.get('pf_nome', '')
+                    vehicle['veiculo_proprietario_doc'] = data.get('pf_cpf', '')
+                    vehicle['veiculo_proprietario_rg_ie'] = data.get('pf_rg', '')
+                    vehicle['veiculo_proprietario_orgao'] = data.get('pf_rg_orgao', '')
+                else:
+                    vehicle['veiculo_proprietario_nome'] = data.get('pj_razao_social', '')
+                    vehicle['veiculo_proprietario_doc'] = data.get('pj_cnpj', '')
+                    vehicle['veiculo_proprietario_rg_ie'] = data.get('pj_inscricao_estadual', '')
+                    vehicle['veiculo_proprietario_orgao'] = ''
+
+        # Cria a lista para o template usar na condição {% if %}
+        data['non_contractor_vehicles'] = [v for v in data.get('vehicles', []) if v.get('owner_is_not_contractor')]
+
+        # Renderiza o template único
+        template = DocxTemplate("template_contrato.docx")
+        template.render(data)
         
         with tempfile.TemporaryDirectory() as tempdir:
-            docx_path = os.path.join(tempdir, 'contrato_temp.docx')
-            doc.save(docx_path)
+            docx_path = os.path.join(tempdir, 'documento_final.docx')
+            template.save(docx_path)
             
-            logging.info(f"Contrato DOCX salvo em {docx_path}. Iniciando conversão para PDF via LibreOffice...")
+            command = ['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', tempdir, docx_path]
+            result = subprocess.run(command, capture_output=True, text=True, timeout=120)
             
-            command = [
-                'libreoffice',
-                '--headless',
-                '--convert-to', 'pdf',
-                '--outdir', tempdir,
-                docx_path
-            ]
+            if result.returncode != 0:
+                logging.error(f"O LibreOffice falhou. Código: {result.returncode}")
+                logging.error(f"Stderr: {result.stderr}")
+                raise subprocess.CalledProcessError(result.returncode, command, output=result.stdout, stderr=result.stderr)
             
-            subprocess.run(command, check=True, timeout=30)
+            pdf_path = os.path.join(tempdir, 'documento_final.pdf')
+            return send_file(pdf_path, as_attachment=True, download_name='Contrato_Completo_Sempre_Alerta.pdf', mimetype='application/pdf')
             
-            pdf_path = os.path.join(tempdir, 'contrato_temp.pdf')
-
-            logging.info(f"Conversão para PDF concluída. Arquivo gerado em {pdf_path}.")
-
-            return send_file(
-                pdf_path,
-                as_attachment=True,
-                download_name='Contrato_Sempre_Alerta.pdf',
-                mimetype='application/pdf'
-            )
-            
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Erro do LibreOffice ao converter o documento: {e}")
-        return jsonify({"error": f"Ocorreu um erro no servidor ao converter o documento: {e}"}), 500
     except Exception as e:
-        logging.error(f"Erro ao gerar o contrato: {e}")
+        logging.error(f"ERRO CRÍTICO ao gerar o contrato: {e}")
         return jsonify({"error": f"Ocorreu um erro no servidor ao gerar o documento: {str(e)}"}), 500
 
 if __name__ == '__main__':

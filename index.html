@@ -14,7 +14,7 @@
             <h1>Gerador de Contrato</h1>
         </header>
         
-        <form id="contract-form">
+        <form id="contract-form" novalidate>
             <section class="form-section">
                 <h2><i class="fas fa-user"></i> Tipo de Contratante</h2>
                 <div class="radio-group">
@@ -54,8 +54,8 @@
                     <div class="input-group">
                         <label>CPF</label>
                         <div class="validation-wrapper">
-                            <input type="text" id="cpf" name="pf_cpf" placeholder="000.000.000-00" required>
-                            <span id="cpf-feedback" class="feedback"></span>
+                            <input type="text" id="cpf" name="pf_cpf" class="cpf-validate" placeholder="000.000.000-00" required>
+                            <span class="feedback"></span>
                         </div>
                     </div>
                     <div class="input-group">
@@ -84,7 +84,7 @@
                     </div>
                     <div class="input-group">
                         <label>CEP</label>
-                        <input type="text" name="pf_cep" id="pf_cep" placeholder="00000-000" required>
+                        <input type="text" name="pf_cep" class="cep-lookup" placeholder="00000-000" required>
                     </div>
                     <div class="input-group">
                         <label>Endereço</label>
@@ -145,7 +145,7 @@
                     </div>
                     <div class="input-group">
                         <label>CEP</label>
-                        <input type="text" name="pj_cep" id="pj_cep" placeholder="00000-000" required disabled>
+                        <input type="text" name="pj_cep" class="cep-lookup" placeholder="00000-000" required disabled>
                     </div>
                     <div class="input-group">
                         <label>Endereço</label>
@@ -243,7 +243,6 @@
                     <i class="fas fa-trash"></i> Remover
                 </button>
             </div>
-
             <div class="checkbox-group full-width" style="margin-bottom: 20px;">
                 <label class="checkbox-option">
                     <input type="checkbox" class="owner-is-not-contractor-checkbox" name="owner_is_not_contractor">
@@ -260,7 +259,10 @@
                     </div>
                     <div class="input-group">
                         <label>CPF / CNPJ</label>
-                        <input type="text" name="veiculo_proprietario_doc" placeholder="Documento do proprietário">
+                        <div class="validation-wrapper">
+                            <input type="text" name="veiculo_proprietario_doc" class="doc-validate" placeholder="Documento do proprietário">
+                            <span class="feedback"></span>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>RG / Inscrição Estadual</label>
@@ -269,6 +271,26 @@
                      <div class="input-group">
                         <label>Órgão Expedidor (se RG)</label>
                         <input type="text" name="veiculo_proprietario_orgao" placeholder="Ex: SSP/MS">
+                    </div>
+                    <div class="input-group">
+                        <label>CEP do Proprietário</label>
+                        <input type="text" name="veiculo_proprietario_cep" class="cep-lookup" placeholder="00000-000">
+                    </div>
+                    <div class="input-group">
+                        <label>Endereço do Proprietário</label>
+                        <input type="text" name="veiculo_proprietario_endereco" placeholder="Rua, número">
+                    </div>
+                    <div class="input-group">
+                        <label>Bairro do Proprietário</label>
+                        <input type="text" name="veiculo_proprietario_bairro" placeholder="Bairro">
+                    </div>
+                    <div class="input-group">
+                        <label>Cidade do Proprietário</label>
+                        <input type="text" name="veiculo_proprietario_cidade" placeholder="Cidade">
+                    </div>
+                    <div class="input-group">
+                        <label>UF do Proprietário</label>
+                        <input type="text" name="veiculo_proprietario_uf" placeholder="UF" maxlength="2">
                     </div>
                 </div>
             </div>
@@ -306,30 +328,6 @@
                 <div class="input-group">
                     <label>RENAVAM</label>
                     <input type="text" name="veiculo_renavam" placeholder="(automático)" readonly>
-                </div>
-                <div class="input-group" style="display:none;">
-                    <label>Situação</label>
-                    <input type="text" name="veiculo_situacao" readonly>
-                </div>
-                 <div class="input-group" style="display:none;">
-                    <label>Município/UF</label>
-                    <input type="text" name="veiculo_municipio_uf" readonly>
-                </div>
-                 <div class="input-group" style="display:none;">
-                    <label>Combustível</label>
-                    <input type="text" name="veiculo_combustivel" readonly>
-                </div>
-                 <div class="input-group" style="display:none;">
-                    <label>Espécie</label>
-                    <input type="text" name="veiculo_especie" readonly>
-                </div>
-                 <div class="input-group" style="display:none;">
-                    <label>Código FIPE</label>
-                    <input type="text" name="fipe_codigo" readonly>
-                </div>
-                <div class="input-group" style="display:none;">
-                    <label>Valor FIPE</label>
-                    <input type="text" name="fipe_valor" readonly>
                 </div>
                 <div class="input-group full-width">
                     <label>Equipamentos Instalados</label>
@@ -389,7 +387,10 @@
                 
                 <div class="input-group">
                     <label>CPF</label>
-                    <input type="text" name="auth_cpf" placeholder="000.000.000-00" required>
+                    <div class="validation-wrapper">
+                        <input type="text" name="auth_cpf" class="cpf-validate" placeholder="000.000.000-00" required>
+                        <span class="feedback"></span>
+                    </div>
                 </div>
                 
                 <div class="input-group">
